@@ -1,0 +1,25 @@
+- name: WP-CLIをセットアップする
+  import_tasks: wp-cli.yml
+
+- name: WordPress環境を作成する
+  include_tasks: setup.yml
+  with_items: "{{ wordpress_info }}"
+
+- name: テストデータを導入する
+  include_tasks: import_test_data.yml
+  with_items: "{{ wordpress_info }}"
+  when: item.test_data
+
+- name: Cron用のPATHを設定する
+  cronvar:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+  with_items:
+    - name: PATH
+      value: "/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:/home/{{ sakura_user_name }}/bin"
+
+- name: バックアップスクリプトをインストール、設定する
+  import_tasks: backup.yml
+
+- name: アップデートスクリプトをインストール、設定する
+  import_tasks: update.yml

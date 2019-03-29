@@ -1,0 +1,7 @@
+- name:
+  hosts: sakura_rental_server
+  become: no
+  vars_files:
+    - config.yml
+  roles:
+    - role: rails
